@@ -4,13 +4,13 @@
 
 **Author:** Siddhi Pathak
 
-**Version:** 1.0
+**Version:** 1.0.1
 
 ---
 
 ## Overview
 
-This short user manual describes how to install, run, and test the Demo Application provided for Lab 1. The goal is to give a clear, minimal set of steps so a new user can get the app running and understand its basic features.
+This revised user manual describes how to install, run, and test the Demo Application provided for Lab 1. The goal is to give a clear, minimal set of steps so a new user can get the app running and understand its basic features.
 
 ## Features
 
