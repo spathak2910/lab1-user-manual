@@ -1,0 +1,61 @@
+name: Docs Lint
+
+on:
+  pull_request:
+    paths:
+      - '**/*.md'      # run only when Markdown files change
+
+jobs:
+  docs-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Check out your repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2️⃣ Set up Python for proselint + codespell
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      # 3️⃣ Set up Node.js for markdownlint
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      # 4️⃣ Install the tools
+      - name: Install linting tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install proselint codespell
+          npm install -g markdownlint-cli
+          wget https://github.com/ValeLint/vale/releases/download/v2.22.0/vale_2.22.0_Linux_64-bit.tar.gz -O /tmp/vale.tar.gz
+          tar -xzf /tmp/vale.tar.gz -C /tmp
+          sudo mv /tmp/vale /usr/local/bin/vale
+          vale --version
+
+      # 5️⃣ Run codespell (typos)
+      - name: Run codespell
+        run: |
+          codespell --ignore-words-list="teh,recieve" $(git ls-files '*.md') || true
+
+      # 6️⃣ Run proselint (grammar/style)
+      - name: Run proselint
+        run: |
+          for f in $(git ls-files '*.md'); do
+            echo "Running proselint on $f"
+            proselint "$f" || true
+          done
+
+      # 7️⃣ Run markdownlint (Markdown rules)
+      - name: Run markdownlint
+        run: |
+          markdownlint $(git ls-files '*.md') || true
+
+      # 8️⃣ Run Vale (writing consistency)
+      - name: Run Vale
+        run: |
+          vale $(git ls-files '*.md') || true
